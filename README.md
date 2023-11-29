@@ -1,5 +1,7 @@
 # archi micro projet
 
+
+
 ## how kafka works
 
 Here's a basic overview of how Kafka works:
