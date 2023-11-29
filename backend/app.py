@@ -1,6 +1,5 @@
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from confluent_kafka import Producer, Consumer, KafkaError
-import threading
 """
 uvicorn app:app --reload
 """

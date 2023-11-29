@@ -9,12 +9,12 @@ def generate_coordinate():
     current_date = time.strftime("%Y-%m-%d %H:%M:%S")
     return {'lat': lat, 'lon': lon, 'timestamp': current_date}
 
-def produce_messages(ws_url, num_messages):
+def produce_messages(ws_url, bootstrap_servers, topic, num_messages):
     ws = websocket.create_connection(ws_url)
 
     for _ in range(num_messages):
         message = generate_coordinate()
-        payload = {'topic': 'coordinates', 'message': message}
+        payload = {'topic': topic, 'message': message, 'bootstrap_servers': bootstrap_servers}
         ws.send(json.dumps(payload))
 
         result = ws.recv()
@@ -24,5 +24,8 @@ def produce_messages(ws_url, num_messages):
 
 if __name__ == '__main__':
     ws_url = 'ws://localhost:8000/ws'  # Replace with your WebSocket server's address
-    num_messages = 10
-    produce_messages(ws_url, num_messages)
+    bootstrap_servers = 'localhost:9092' # kafka's broker address
+    TOPIC = 'coordinates'
+    num_messages = 1000
+    produce_messages(ws_url, bootstrap_servers, TOPIC, num_messages)
+
