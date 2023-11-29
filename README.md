@@ -1,6 +1,12 @@
 # archi micro projet
 
 ## kafka broker
+TODO:
+
+idea: 
+producer -> produce request to websocket -> websocket produce on the 'server' machine
+the 'server' machine has a consumer which can consume the messages and put them 
+in db.
 
 [kafka quickstart guide](https://kafka.apache.org/quickstart)
 
