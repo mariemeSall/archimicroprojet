@@ -2,7 +2,7 @@
 
 
 
-## how kafka works
+## how kafka works (chatgpt)
 
 Here's a basic overview of how Kafka works:
 
