@@ -1,17 +1,33 @@
 # archi micro projet
 
+## kafka broker
 
+[kafka quickstart guide](https://kafka.apache.org/quickstart)
 
-## how kafka works (chatgpt)
+### launch broker on 2 terminal:
+    
+    bin/zookeeper-server-start.sh config/zookeeper.properties
+    
+    bin/kafka-server-start.sh config/server.properties
 
-Here's a basic overview of how Kafka works:
+### test messages on 'test-topic'
 
-1. Topics: Data is organized into topics, which act as message categories. Producers send messages to topics, and consumers subscribe to topics to receive messages.
+write: 
 
-2. Producers: Producers are responsible for publishing messages to Kafka topics. They push messages to Kafka brokers.
+    bin/kafka-console-producer.sh --topic test-topic --bootstrap-server localhost:9092
 
-3. Brokers: Kafka brokers are servers that store data and serve client requests. They manage the distribution of data across topics and partitions.
+read: 
 
-4. Partitions: Each topic is divided into partitions, and each partition is ordered. Partitions allow Kafka to parallelize processing and scale horizontally.
+    bin/kafka-console-consumer.sh --topic test-topic --from-beginning --bootstrap-server localhost:9092
 
-5. Consumers: Consumers subscribe to topics and process the messages produced by producers. Consumers are grouped, and each consumer group receives a copy of the messages in a topic.
+### create topic coordinates (one time only):
+
+    bin/kafka-topics.sh --create --topic coordinates --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+
+### kafka server logs:
+    
+    tail -f logs/server.log
+
+### broker config (in server.properties):
+
+    listeners=PLAINTEXT://localhost:9092
