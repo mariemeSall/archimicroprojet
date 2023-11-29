@@ -6,6 +6,13 @@ app = FastAPI()
 """
 uvicorn appsocket:app --reload
 and do python3 producerws.py to test
+TODO: consumer.py qui consume dans topic coordinates
+and balance dans bdd PostGRE
+Check comment clear un topic
+TO MAKE IT ACCESSIBLE FROM OTHER COMPUTERS:
+uvicorn appsocket:app --host 0.0.0.0 --port 8000 --reload
+
+
 """
 # Create a Kafka consumer
 consumer_conf = {
@@ -15,13 +22,15 @@ consumer_conf = {
 }
 consumer = Consumer(consumer_conf)
 messages = []
+# Custom producer with name of machine
+machine_identifier = "alan_laptop"
 
 # for message delivery to the broker
 def delivery_report(err, msg):
     if err is not None:
         print('Message delivery failed: {}'.format(err))
     else:
-        print('Message delivered to topic \'{}\' [{}]'.format(msg.topic(), msg.partition()))
+        print('Message delivered to topic \'{}\', partition [{}]'.format(msg.topic(), msg.partition()))
     
 # produce the data on the broker
 def produce_data(data):
@@ -41,7 +50,7 @@ def produce_data(data):
         'bootstrap.servers': bootstrap_servers,
     }
     producer = Producer(producer_conf)
-    producer.produce(topic, value=message_bytes, callback=delivery_report)
+    producer.produce(topic, key=machine_identifier, value=message_bytes, callback=delivery_report)
     producer.flush()
     return {"message_produced": f"{message}"}
 

@@ -23,9 +23,10 @@ def produce_messages(ws_url, bootstrap_servers, topic, num_messages):
     ws.close()
 
 if __name__ == '__main__':
-    ws_url = 'ws://localhost:8000/ws'  # Replace with your WebSocket server's address
+    # ws_url = 'ws://localhost:8000/ws'  # Websocket URL local
+    ws_url = 'ws://0.0.0.0:8000/ws'  # Websocket URL
     bootstrap_servers = 'localhost:9092' # kafka's broker address
     TOPIC = 'coordinates'
-    num_messages = 1000
+    num_messages = 10
     produce_messages(ws_url, bootstrap_servers, TOPIC, num_messages)
 
