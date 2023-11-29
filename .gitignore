@@ -1,0 +1,4 @@
+/.idea/*
+/front/.vscode/*
+/front/node_modules/*
+/.venv/*
