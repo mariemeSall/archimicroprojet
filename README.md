@@ -3,6 +3,10 @@
 ## kafka broker
 TODO:
 
+MAKE SURE PRODUCERS CAN PRODUCE IN PARALLEL, NOT THE CASE RIGHT NOW
+try asyncio, 2 producer.py files with different keys, try producing
+in parallel.
+
 idea: 
 producer -> produce request to websocket -> websocket produce on the 'server' machine
 the 'server' machine has a consumer which can consume the messages and put them 
@@ -10,7 +14,14 @@ in db.
 
 [kafka quickstart guide](https://kafka.apache.org/quickstart)
 
-### launch broker on 2 terminal:
+### Data format sent to topic coordinates
+
+The data is to the broker in the format: lat; long; Date.<br>
+Example: "-48.744897; -78.637573; 2023-12-27 16:03:41" <br>
+This is a full string, so it needs to parsed and converted.
+
+
+### launch broker on 2 terminal (go into kafka folder first):
     
     bin/zookeeper-server-start.sh config/zookeeper.properties
     
