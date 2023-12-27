@@ -54,5 +54,5 @@ def consume_messages(bootstrap_servers, group_id, topic):
 if __name__ == '__main__':
     bootstrap_servers = 'localhost:9092'  # Replace with your Kafka broker's address
     group_id = 'my-consumer-group'  # Choose a unique group ID for your consumer
-    TOPIC = 'coordinates'
-    consume_messages(bootstrap_servers, group_id, TOPIC)
+    topic = 'coordinates'
+    consume_messages(bootstrap_servers, group_id, topic)

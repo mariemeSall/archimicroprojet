@@ -8,12 +8,6 @@ directly to the broker running on local
 """
 NUM_PARTITIONS = 2	
 
-def delivery_report(err, msg):
-    if err is not None:
-        print('Message delivery failed: {}'.format(err))
-    else:
-        print('Message delivered to {}, partition: [{}]'.format(msg.topic(), msg.partition()))
-
 def generate_coordinate():
     # Generate random latitude and longitude
     lat = round(random.uniform(-90, 90), 6)
@@ -23,6 +17,12 @@ def generate_coordinate():
     current_date = time.strftime("%Y-%m-%d %H:%M:%S")
 
     return f'{lat}; {lon}; {current_date}'
+
+def delivery_report(err, msg):
+    if err is not None:
+        print('Message delivery failed: {}'.format(err))
+    else:
+        print('Message delivered to {}, partition: [{}]'.format(msg.topic(), msg.partition()))
 
 def get_machine_partition():
     # Modify this function to return a machine-specific value for the partition
