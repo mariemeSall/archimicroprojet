@@ -12,6 +12,8 @@ services:
     command: npm start
     depends_on:
         - postgres
+    networks:
+      - archimicroprojet_kafka_net
 
   kafka-consumer:
     build:
@@ -23,8 +25,9 @@ services:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: password
       POSTGRES_DB: coordonnee
+    networks:
+      - archimicroprojet_kafka_net
 
 networks:
-  default:
-    external:
-      name: kafka_net
+  archimicroprojet_kafka_net:
+    external: true
