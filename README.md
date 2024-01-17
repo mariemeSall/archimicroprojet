@@ -57,8 +57,8 @@ read:
     
 ## Database POSTGRESQL
 
-Once postgres installed<br>
-go into BDD, and type createdb coords
+Once postgres installed (read requirements.txt)<br>
+go into folder BDD/, and type ```createdb coords```<br>
 if error : "role 'name' does not exist" then create a superuser
 by following instructions below and by replacing cytech by
 your name.
