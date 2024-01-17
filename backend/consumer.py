@@ -1,9 +1,14 @@
 from confluent_kafka import Consumer, KafkaError
-"""
-running this will consume the topic coordinates
-by simply running when broker is active it should
-do the trick.
-"""
+
+def push_msg_to_db(message:str, partition:str):
+    splitted_msg = message.split(';')
+    lat = splitted_msg[0]
+    long = splitted_msg[1]
+    date = splitted_msg[2]
+
+    
+
+    return 0
 
 def consume_messages(bootstrap_servers, group_id, topic):
     consumer_conf = {
@@ -18,9 +23,10 @@ def consume_messages(bootstrap_servers, group_id, topic):
     max_iterations_without_messages = 10
     iterations_without_messages = 0
 
+    print('bootstrapped the consumer; waiting for messages')
     try:
         while True:
-            msg = consumer.poll(timeout=1000)
+            msg = consumer.poll(timeout=10)
 
             if msg is None:
                 iterations_without_messages += 1
@@ -40,8 +46,11 @@ def consume_messages(bootstrap_servers, group_id, topic):
                 else:
                     print("Error: {}".format(msg.error()))
                     break
-
-            print('Received message: {} --- from partition [{}]'.format(msg.value().decode('utf-8'), msg.partition()))
+            
+            str_message = msg.value().decode('utf-8')
+            partition = msg.partition()
+            print('Received message: {} --- from partition [{}]'.format(str_message, msg.partition()))
+            push_msg_to_db(str_message, partition)
 
     except KeyboardInterrupt:
         print("KeyboardInterrupt")

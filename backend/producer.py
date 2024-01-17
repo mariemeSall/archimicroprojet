@@ -25,11 +25,16 @@ def delivery_report(err, msg):
         print('Message delivered to {}, partition: [{}]'.format(msg.topic(), msg.partition()))
 
 def get_machine_partition():
-    # Modify this function to return a machine-specific value for the partition
-    # For example, you can use the machine's hostname, IP address, or any other criteria
-    # The returned value should be an integer representing the partition number.
-    # Ensure that the number is within the range of available partitions for the topic.
-    return hash(socket.gethostname()) % NUM_PARTITIONS
+    # Get the machine's IP address
+    ip_address = socket.gethostbyname(socket.gethostname())
+
+    # Convert the IP address to an integer for partitioning
+    ip_integer = int(ip_address.replace(".", ""))
+
+    # Calculate the partition based on the IP address
+    partition = ip_integer % NUM_PARTITIONS
+
+    return partition
 
 def produce_messages(bootstrap_servers, topic, num_messages):
     producer_conf = {

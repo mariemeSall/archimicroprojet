@@ -45,6 +45,10 @@ read:
 
 	bin/kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic coordinates
 
+### list topics
+
+	kafka-topics.sh --bootstrap-server localhost:9092 --list --command-config /path/to/client.properties
+	
 ### kafka server logs:
     
     tail -f logs/server.log
@@ -52,3 +56,27 @@ read:
 ### broker config (in server.properties):
 
     listeners=PLAINTEXT://localhost:9092
+    
+## Database
+
+Once postgres installed
+go into BDD, and type createdb coords
+if error "role 'name' does not exist" then create a superuser
+by following instructions below and by replacing cytech by
+your name.
+
+### create super user for postgresql
+
+    sudo -i -u postgres
+    psql
+    CREATE USER cytech WITH SUPERUSER CREATEDB CREATEROLE PASSWORD 'password';
+    \q
+    exit
+
+### create empty database
+
+    createdb -U cytech coords
+
+### restore database into the empty database
+
+    psql -U cytech -d coords -f db_microarchie.dump
