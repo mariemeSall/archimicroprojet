@@ -12,3 +12,19 @@ services:
     command: npm start
     depends_on:
         - postgres
+
+  kafka-consumer:
+    build:
+      context: ./path/to/consumer
+    environment:
+      KAFKA_BROKER: kafka-broker:9092
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: coordonnee
+
+networks:
+  default:
+    external:
+      name: kafka_net
