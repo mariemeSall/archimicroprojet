@@ -43,3 +43,7 @@ front/typings
 # System files
 front/.DS_Store
 front/Thumbs.db
+
+
+*/__pycache__
+*/*/__pycache__
