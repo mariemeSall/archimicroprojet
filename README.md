@@ -76,3 +76,19 @@ your name.
 
     createdb -U cytech coords
     psql -U cytech -d coords -f db_microarchie.dump
+
+
+### Run the docker-compose (postgres, front, kafka)
+```
+docker-compose up
+```
+
+### Run the producer docker-compose (postgres, front, kafka)
+```
+docker-compose -f producer-docker-compose.yml up
+```
+
+### Run the consumer docker-compose (postgres, front, kafka)
+```
+docker-compose -f consumer-docker-compose.yml up
+```

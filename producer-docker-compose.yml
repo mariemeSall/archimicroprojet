@@ -3,7 +3,7 @@ version: '3'
 services:
   kafka-producer:
     build:
-      context: ./producer
+      context: ./backend/producer
     environment:
       KAFKA_BROKER: kafka-broker:9092
     networks:
