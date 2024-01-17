@@ -1,23 +1,31 @@
 from confluent_kafka import Consumer, KafkaError
+import time
 import psycopg2
 from psycopg2 import sql
 """
 message received are like this (str_message in the code):
 17.744944; 129.53277; 2024-01-17 11:06:18; IP_add
 
+you can use consume_messages_and_push_to_db()
+to listen to the kafka broker and push messages to the db
+
+you can retrieve_messages_from_db() to retrieve
+all rows from the db. 
 """
 
 def connect_to_db():
-    dbname = "coords"
-    user = "cytech"
-    password = 'password'
-    host = "localhost"
-    port = "5432"
-
+    dbname =    "coords"
+    user =      "cytech"
+    password =  "password"
+    host =      "localhost"
+    port =      "5432"
     connection = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
     return connection
 
 def push_msg_to_db(message: str):
+    """
+    push a coordinate message into the database
+    """
     # Connect to the database
     connection = connect_to_db()
 
@@ -42,6 +50,9 @@ def push_msg_to_db(message: str):
         connection.close()
 
 def retrieve_messages_from_db():
+    """
+    return the rows of the database
+    """
     # Connect to the database
     connection = connect_to_db()
 
@@ -65,6 +76,9 @@ def retrieve_messages_from_db():
         connection.close()
 
 def clear_all_rows_from_db():
+    """
+    clears all rows from the database
+    """
     # Connect to the database
     connection = connect_to_db()
 
@@ -87,7 +101,7 @@ def clear_all_rows_from_db():
 # ====================================
 # ============ main loop =============
 # ====================================
-def consume_messages(bootstrap_servers, group_id, topic):
+def consume_messages_and_push_to_db(bootstrap_servers, group_id, topic):
     consumer_conf = {
         'bootstrap.servers': bootstrap_servers,
         'group.id': group_id,
@@ -129,11 +143,8 @@ def consume_messages(bootstrap_servers, group_id, topic):
             # --- message processing ---
             str_message = msg.value().decode('utf-8')
             partition = msg.partition()
-            # print('Received message: {} --- from partition [{}]'.format(str_message, msg.partition()))
             push_msg_to_db(str_message)
-            print(f'=====\nMESSAGE FROM DB:\n{retrieve_messages_from_db()}')
-            # print('clearing...')
-            # clear_all_rows_from_db()
+            print('Received message and pushed to database: {} --- from partition [{}]'.format(str_message, msg.partition()))
 
     except KeyboardInterrupt:
         print("KeyboardInterrupt")
@@ -148,4 +159,7 @@ if __name__ == '__main__':
     bootstrap_servers = 'localhost:9092'  # Kafka broker's address
     group_id = 'my-consumer-group'
     topic = 'coordinates'
-    consume_messages(bootstrap_servers, group_id, topic)
+    consume_messages_and_push_to_db(bootstrap_servers, group_id, topic)
+    while False:
+        print(retrieve_messages_from_db())
+        time.sleep(1)
