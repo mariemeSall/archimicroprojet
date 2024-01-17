@@ -57,13 +57,14 @@ read:
 
     listeners=PLAINTEXT://localhost:9092
     
-## Database
+## Database POSTGRESQL
 
 Once postgres installed
 go into BDD, and type createdb coords
-if error "role 'name' does not exist" then create a superuser
+if error : "role 'name' does not exist" then create a superuser
 by following instructions below and by replacing cytech by
 your name.
+(to display users: once you type psql type \du)
 
 ### create super user for postgresql
 

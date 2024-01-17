@@ -1,20 +1,72 @@
 from confluent_kafka import Consumer, KafkaError
+import psycopg2
+from psycopg2 import sql
 """
 message received are like this (str_message in the code):
-17.744944; 129.53277; 2024-01-17 11:06:18
+17.744944; 129.53277; 2024-01-17 11:06:18; IP_add
 
 """
 
+def connect_to_db():
+    dbname = "coords"
+    user = "cytech"
+    password = 'password'
+    host = "localhost"
+    port = "5432"
 
-def push_msg_to_db(message:str, partition:str):
-    splitted_msg = message.split(';')
-    lat = splitted_msg[0]
-    long = splitted_msg[1]
-    date = splitted_msg[2]
-    ip = splitted_msg[3]
+    connection = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+    return connection
 
-    return 0
+def push_msg_to_db(message: str):
+    # Connect to the database
+    connection = connect_to_db()
 
+    try:
+        # Create a cursor
+        with connection.cursor() as cursor:
+            # Split the message
+            lat, long, date, ip = message.split(';')
+
+            # Insert data into the "coordonnee" table
+            insert_query = sql.SQL("""
+                INSERT INTO coordonnee (longitude, latitude, date, ip)
+                VALUES (%s, %s, %s, %s)
+            """)
+            cursor.execute(insert_query, (float(long), float(lat), date, ip))
+
+        # Commit the changes
+        connection.commit()
+
+    finally:
+        # Close the connection
+        connection.close()
+
+def retrieve_messages_from_db():
+    # Connect to the database
+    connection = connect_to_db()
+
+    try:
+        # Create a cursor
+        with connection.cursor() as cursor:
+            # Select all rows from the "coordonnee" table
+            select_query = sql.SQL("""
+                SELECT * FROM coordonnee
+            """)
+            cursor.execute(select_query)
+
+            # Fetch all rows
+            rows = cursor.fetchall()
+
+            # Return the result
+            return rows
+
+    finally:
+        # Close the connection
+        connection.close()
+
+# ====================================
+# ============ main loop =============
+# ====================================
 def consume_messages(bootstrap_servers, group_id, topic):
     consumer_conf = {
         'bootstrap.servers': bootstrap_servers,
@@ -28,11 +80,12 @@ def consume_messages(bootstrap_servers, group_id, topic):
     max_iterations_without_messages = 5
     iterations_without_messages = 0
 
-    print('bootstrapped the consumer; waiting for messages')
+    print(f'bootstrapped the consumer to broker and topic {topic}; waiting for messages')
     try:
         while True:
             msg = consumer.poll(timeout=10)
-
+            
+            # exit after too much idle time
             if msg is None:
                 iterations_without_messages += 1
                 if iterations_without_messages > max_iterations_without_messages:
@@ -44,6 +97,7 @@ def consume_messages(bootstrap_servers, group_id, topic):
 
             iterations_without_messages = 0  # Reset the count when a message is received
 
+            # error handling
             if msg.error():
                 if msg.error().code() == KafkaError._PARTITION_EOF:
                     print("Reached end of partition. Continuing.")
@@ -52,10 +106,12 @@ def consume_messages(bootstrap_servers, group_id, topic):
                     print("Error: {}".format(msg.error()))
                     break
             
+            # message processing
             str_message = msg.value().decode('utf-8')
             partition = msg.partition()
             print('Received message: {} --- from partition [{}]'.format(str_message, msg.partition()))
-            push_msg_to_db(str_message, partition)
+            push_msg_to_db(str_message)
+            print(f'=====\nMESSAGE FROM DB:\n{retrieve_messages_from_db()}')
 
     except KeyboardInterrupt:
         print("KeyboardInterrupt")
@@ -66,7 +122,7 @@ def consume_messages(bootstrap_servers, group_id, topic):
         consumer.close()
 
 if __name__ == '__main__':
-    bootstrap_servers = 'localhost:9092'  # Replace with your Kafka broker's address
-    group_id = 'my-consumer-group'  # Choose a unique group ID for your consumer
+    bootstrap_servers = 'localhost:9092'  # Kafka broker's address
+    group_id = 'my-consumer-group'
     topic = 'coordinates'
     consume_messages(bootstrap_servers, group_id, topic)
