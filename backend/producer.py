@@ -18,7 +18,7 @@ def generate_coordinate():
     current_date = time.strftime("%Y-%m-%d %H:%M:%S")
     ip_address = socket.gethostbyname(socket.gethostname())
 
-    return f'{lat}; {lon}; {current_date}; {ip_address}'
+    return f'{lat}; {lon}; {ip_address}; {current_date}'
 
 def delivery_report(err, msg):
     if err is not None:
