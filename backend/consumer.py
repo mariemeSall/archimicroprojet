@@ -64,6 +64,26 @@ def retrieve_messages_from_db():
         # Close the connection
         connection.close()
 
+def clear_all_rows_from_db():
+    # Connect to the database
+    connection = connect_to_db()
+
+    try:
+        # Create a cursor
+        with connection.cursor() as cursor:
+            # Delete all rows from the "coordonnee" table
+            delete_query = sql.SQL("""
+                DELETE FROM coordonnee
+            """)
+            cursor.execute(delete_query)
+
+        # Commit the changes
+        connection.commit()
+
+    finally:
+        # Close the connection
+        connection.close()
+
 # ====================================
 # ============ main loop =============
 # ====================================
@@ -80,7 +100,7 @@ def consume_messages(bootstrap_servers, group_id, topic):
     max_iterations_without_messages = 5
     iterations_without_messages = 0
 
-    print(f'bootstrapped the consumer to broker and topic {topic}; waiting for messages')
+    print(f'bootstrapped the consumer to broker and topic [{topic}]; waiting for messages...')
     try:
         while True:
             msg = consumer.poll(timeout=10)
@@ -106,12 +126,14 @@ def consume_messages(bootstrap_servers, group_id, topic):
                     print("Error: {}".format(msg.error()))
                     break
             
-            # message processing
+            # --- message processing ---
             str_message = msg.value().decode('utf-8')
             partition = msg.partition()
-            print('Received message: {} --- from partition [{}]'.format(str_message, msg.partition()))
+            # print('Received message: {} --- from partition [{}]'.format(str_message, msg.partition()))
             push_msg_to_db(str_message)
             print(f'=====\nMESSAGE FROM DB:\n{retrieve_messages_from_db()}')
+            # print('clearing...')
+            # clear_all_rows_from_db()
 
     except KeyboardInterrupt:
         print("KeyboardInterrupt")
@@ -120,6 +142,7 @@ def consume_messages(bootstrap_servers, group_id, topic):
     finally:
         print("Exiting the consumer.")
         consumer.close()
+
 
 if __name__ == '__main__':
     bootstrap_servers = 'localhost:9092'  # Kafka broker's address
