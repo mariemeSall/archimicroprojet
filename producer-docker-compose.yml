@@ -1,19 +1,14 @@
 version: '3'
 
 services:
-  kafka-producer-ip1:
+  kafka-producer:
     build:
-      context: ./path/to/producer-ip1
+      context: ./producer
     environment:
       KAFKA_BROKER: kafka-broker:9092
-
-  kafka-producer-ip2:
-    build:
-      context: ./path/to/producer-ip2
-    environment:
-      KAFKA_BROKER: kafka-broker:9092
+    networks:
+      - kafka_net
 
 networks:
-  default:
-    external:
-      name: kafka_net
+  kafka_net:
+    external: true

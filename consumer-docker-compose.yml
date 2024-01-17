@@ -15,7 +15,7 @@ services:
 
   kafka-consumer:
     build:
-      context: ./path/to/consumer
+      context: ./consumer
     environment:
       KAFKA_BROKER: kafka-broker:9092
       POSTGRES_HOST: postgres

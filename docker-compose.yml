@@ -10,6 +10,8 @@ services:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: password
       POSTGRES_DB: coordonnee
+    networks:
+      - kafka_net
             
   zookeeper:
     image: wurstmeister/zookeeper
@@ -19,7 +21,7 @@ services:
     networks:
       - kafka_net
 
-  kafka:
+  kafka-broker:
     image: wurstmeister/kafka
     container_name: kafka
     ports:
@@ -30,6 +32,9 @@ services:
       KAFKA_LISTENERS: INSIDE://0.0.0.0:9092,OUTSIDE://0.0.0.0:9093
       KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+    networks:
+      - kafka_net
+
 networks:
   kafka_net:
     driver: bridge
