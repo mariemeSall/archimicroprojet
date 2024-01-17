@@ -1,5 +1,4 @@
 from confluent_kafka import Consumer, KafkaError
-import time
 import psycopg2
 from psycopg2 import sql
 """
