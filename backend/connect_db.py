@@ -49,7 +49,5 @@ def display_database(connection):
     connection.close()
 
 if __name__ == '__main__':
-    user = 'alan'
-    password = 'pass'   
     connection = create_user_and_connect_to_db()
     display_database(connection)
