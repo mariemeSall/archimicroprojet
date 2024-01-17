@@ -9,17 +9,21 @@ directly to the broker running on local
 """
 NUM_PARTITIONS = 10
 
-def generate_coordinate():
+def generate_coordinate(start_lat, start_long):
     # Generate random latitude and longitude
-    lat = round(random.uniform(-90, 90), 6)
-    lon = round(random.uniform(-180, 180), 6)
+    lat_delta = round(random.uniform(-1, 1), 6)
+    long_delta = round(random.uniform(-1, 1), 6)
 
+    lat = start_lat + lat_delta
+    long = start_long + long_delta
+    return round(lat, 6), round(long, 6)
+
+def generate_message(lat, long):
     # Get the current date and time in ISO format
     current_date = time.strftime("%Y-%m-%d %H:%M:%S")
     ip_address = socket.gethostbyname(socket.gethostname())
-
-    return f'{lat}; {lon}; {ip_address}; {current_date}'
-
+    return f'{lat}; {long}; {ip_address}; {current_date}'
+    
 def delivery_report(err, msg):
     if err is not None:
         print('Message delivery failed: {}'.format(err))
@@ -46,10 +50,12 @@ def produce_messages(bootstrap_servers, topic, num_messages):
     producer = Producer(producer_conf)
 
     for _ in range(num_messages):
-        message = generate_coordinate()
+        lat, long = 43.321551, -0.359241 # start in Pau
+        lat, long = generate_coordinate(lat, long)
+        message = generate_message(lat, long)
         partition = get_machine_partition()
         producer.produce(topic, value=message, partition=partition, callback=delivery_report)
-        time.sleep(1)
+        time.sleep(0.5)
 
     producer.flush()
 
