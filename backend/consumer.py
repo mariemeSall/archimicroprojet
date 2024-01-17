@@ -11,8 +11,7 @@ def push_msg_to_db(message:str, partition:str):
     lat = splitted_msg[0]
     long = splitted_msg[1]
     date = splitted_msg[2]
-
-
+    ip = splitted_msg[3]
 
     return 0
 
@@ -26,7 +25,7 @@ def consume_messages(bootstrap_servers, group_id, topic):
     consumer = Consumer(consumer_conf)
     consumer.subscribe([topic])
     
-    max_iterations_without_messages = 10
+    max_iterations_without_messages = 5
     iterations_without_messages = 0
 
     print('bootstrapped the consumer; waiting for messages')

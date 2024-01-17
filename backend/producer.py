@@ -1,12 +1,13 @@
 import time
 import random
 import socket
+import hashlib
 from confluent_kafka import Producer
 """
 running this will create test coordinates
 directly to the broker running on local
 """
-NUM_PARTITIONS = 2	
+NUM_PARTITIONS = 10
 
 def generate_coordinate():
     # Generate random latitude and longitude
@@ -15,8 +16,9 @@ def generate_coordinate():
 
     # Get the current date and time in ISO format
     current_date = time.strftime("%Y-%m-%d %H:%M:%S")
+    ip_address = socket.gethostbyname(socket.gethostname())
 
-    return f'{lat}; {lon}; {current_date}'
+    return f'{lat}; {lon}; {current_date}; {ip_address}'
 
 def delivery_report(err, msg):
     if err is not None:
@@ -28,11 +30,11 @@ def get_machine_partition():
     # Get the machine's IP address
     ip_address = socket.gethostbyname(socket.gethostname())
 
-    # Convert the IP address to an integer for partitioning
-    ip_integer = int(ip_address.replace(".", ""))
+    # Use a hash function to generate a consistent hash value
+    hash_value = int(hashlib.sha256(ip_address.encode()).hexdigest(), 16)
 
-    # Calculate the partition based on the IP address
-    partition = ip_integer % NUM_PARTITIONS
+    # Calculate the partition based on the hash value
+    partition = hash_value % NUM_PARTITIONS
 
     return partition
 
