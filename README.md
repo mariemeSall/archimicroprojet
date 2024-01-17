@@ -1,27 +1,29 @@
 # archi micro projet
 
-## kafka broker
-TODO:
+## Kafka
 
 [kafka quickstart guide](https://kafka.apache.org/quickstart)
 
+TODO:
+
 ### Data format sent to topic coordinates
 
-The data is to the broker in the format: lat; long; Date.<br>
-Example: "-48.744897; -78.637573; 2023-12-27 16:03:41"<br>
-This is a full string, so it needs to parsed and converted.
-
-### some command (go into kafka folder)
-
-    i needed to do this to install kafka i guess after cloning repo 
-
-    ./gradlew jar -PscalaVersion=2.13.11
+The data is to the broker in the format: lat; long; Date; ip.<br>
+Example: "-48.744897; -78.637573; 2023-12-27 16:03:41; 172.17.9.135"<br>
 
 ### launch broker on 2 terminal (go into kafka folder first)
-    
-    bin/zookeeper-server-start.sh config/zookeeper.properties
-    
-    bin/kafka-server-start.sh config/server.properties
+```
+bin/zookeeper-server-start.sh config/zookeeper.properties
+```
+```
+bin/kafka-server-start.sh config/server.properties
+``` 
+
+### some command if it fails (go into kafka folder)
+
+i needed to do this to install kafka i guess after cloning repo 
+
+    ./gradlew jar -PscalaVersion=2.13.11
 
 ### test messages on 'test-topic'
 
@@ -55,7 +57,7 @@ read:
     
 ## Database POSTGRESQL
 
-Once postgres installed
+Once postgres installed<br>
 go into BDD, and type createdb coords
 if error : "role 'name' does not exist" then create a superuser
 by following instructions below and by replacing cytech by
