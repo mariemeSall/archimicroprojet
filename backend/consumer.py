@@ -1,4 +1,10 @@
 from confluent_kafka import Consumer, KafkaError
+"""
+message received are like this (str_message in the code):
+17.744944; 129.53277; 2024-01-17 11:06:18
+
+"""
+
 
 def push_msg_to_db(message:str, partition:str):
     splitted_msg = message.split(';')
@@ -6,7 +12,7 @@ def push_msg_to_db(message:str, partition:str):
     long = splitted_msg[1]
     date = splitted_msg[2]
 
-    
+
 
     return 0
 
