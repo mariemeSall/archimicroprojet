@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  kafka-producer:
+    build:
+      context: ./backend/producer
+    environment:
+      KAFKA_BROKER: kafka-broker:9092
+    networks:
+      - archimicroprojet_kafka_net
+
+networks:
+  archimicroprojet_kafka_net:
+    external: true
