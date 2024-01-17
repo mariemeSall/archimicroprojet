@@ -1,17 +1,82 @@
 # archi micro projet
 
+## kafka broker
+TODO:
+
+MAKE SURE PRODUCERS CAN PRODUCE IN PARALLEL, NOT THE CASE RIGHT NOW
+try asyncio, 2 producer.py files with different keys, try producing
+in parallel.
+
+idea: 
+producer -> produce request to websocket -> websocket produce on the 'server' machine
+the 'server' machine has a consumer which can consume the messages and put them 
+in db.
+
+[kafka quickstart guide](https://kafka.apache.org/quickstart)
+
+### Data format sent to topic coordinates
+
+The data is to the broker in the format: lat; long; Date.<br>
+Example: "-48.744897; -78.637573; 2023-12-27 16:03:41" <br>
+This is a full string, so it needs to parsed and converted.
 
 
-## how kafka works (chatgpt)
+### launch broker on 2 terminal (go into kafka folder first):
+    
+    bin/zookeeper-server-start.sh config/zookeeper.properties
+    
+    bin/kafka-server-start.sh config/server.properties
 
-Here's a basic overview of how Kafka works:
+### test messages on 'test-topic'
 
-1. Topics: Data is organized into topics, which act as message categories. Producers send messages to topics, and consumers subscribe to topics to receive messages.
+write: 
 
-2. Producers: Producers are responsible for publishing messages to Kafka topics. They push messages to Kafka brokers.
+    bin/kafka-console-producer.sh --topic test-topic --bootstrap-server localhost:9092
 
-3. Brokers: Kafka brokers are servers that store data and serve client requests. They manage the distribution of data across topics and partitions.
+read: 
 
-4. Partitions: Each topic is divided into partitions, and each partition is ordered. Partitions allow Kafka to parallelize processing and scale horizontally.
+    bin/kafka-console-consumer.sh --topic test-topic --from-beginning --bootstrap-server localhost:9092
 
-5. Consumers: Consumers subscribe to topics and process the messages produced by producers. Consumers are grouped, and each consumer group receives a copy of the messages in a topic.
+### create topic coordinates (one time only):
+
+    bin/kafka-topics.sh --create --topic coordinates --bootstrap-server localhost:9092 --partitions 2 --replication-factor 1
+
+### delete topic
+
+	bin/kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic coordinates
+
+### list topics
+
+	kafka-topics.sh --bootstrap-server localhost:9092 --list --command-config /path/to/client.properties
+	
+### kafka server logs:
+    
+    tail -f logs/server.log
+
+### broker config (in server.properties):
+
+    listeners=PLAINTEXT://localhost:9092
+    
+## Database
+
+Once postgres installed
+go into BDD, and type createdb coords
+if error "role 'name' does not exist" then create a superuser
+by following instructions below and by replacing cytech by
+your name.
+
+### create super user for postgresql
+
+    sudo -i -u postgres
+    psql
+    CREATE USER cytech WITH SUPERUSER CREATEDB CREATEROLE PASSWORD 'password';
+    \q
+    exit
+
+### create empty database
+
+    createdb -U cytech coords
+
+### restore database into the empty database
+
+    psql -U cytech -d coords -f db_microarchie.dump
