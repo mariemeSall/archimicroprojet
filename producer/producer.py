@@ -55,12 +55,12 @@ def produce_messages(bootstrap_servers, topic, num_messages):
         message = generate_message(lat, long)
         partition = get_machine_partition()
         producer.produce(topic, value=message, partition=partition, callback=delivery_report)
-        time.sleep(0.5)
+        time.sleep(2)
 
     producer.flush()
 
 if __name__ == '__main__':
     bootstrap_servers = 'localhost:9092'  # Kafka broker's address
     topic = 'coordinates'
-    num_messages = 50
+    num_messages = 500
     produce_messages(bootstrap_servers, topic, num_messages)
