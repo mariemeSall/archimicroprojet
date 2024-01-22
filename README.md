@@ -1,5 +1,14 @@
 # archi micro projet
 
+## TODO 
+
+api route to send to rows of data to frontend to be displayed (maybe some preprocessing before in consumer.py)
+
+
+## Schema of structure
+
+![AltText](schema.jpg)
+
 ## Kafka
 
 [kafka quickstart guide](https://kafka.apache.org/quickstart)
@@ -77,6 +86,14 @@ your name.
     createdb -U cytech coords
     psql -U cytech -d coords -f db_microarchie.dump
 
+## API 
+
+### run api manually
+```
+uvicorn app:app --reload
+```
+
+## Docker 
 
 ### Run the docker-compose (postgres, front, kafka)
 ```
