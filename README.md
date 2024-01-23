@@ -2,7 +2,11 @@
 
 ## TODO 
 
-api route to send to rows of data to frontend to be displayed (maybe some preprocessing before in consumer.py)
+Dockerize everything
+testapi.py api working
+kafka working
+bdd postgresql working
+consumer and producer working
 
 
 ## Schema of structure
