@@ -5,13 +5,6 @@ import requests
 import httpx
 """
 """
-
-import sys
-def pp(*p): # for debug
-    for idx, arg_value in enumerate(p): print(f'{idx}:\tval= {arg_value}\ttype= {type(arg_value)}')
-    sys.exit()
-
-
 class Coord:
     def __init__(self, lat, long, ip, date) -> None:
         self.lat: float = lat
@@ -19,7 +12,6 @@ class Coord:
         self.ip: str = ip
         self.date: str = date
     
-
 def connect_to_db():
     dbname = "coords"
     user = "root"
@@ -28,7 +20,6 @@ def connect_to_db():
     port = "5432"
     connection = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
     return connection
-
 
 def push_to_db(coord: Coord):
     connection = connect_to_db()
@@ -47,26 +38,7 @@ def push_to_db(coord: Coord):
         connection.close()
     return {"status": "Message pushed to the database successfully"}
 
-
-def retrieve_all_rows():
-    connection = connect_to_db()
-
-    try:
-        with connection.cursor() as cursor:
-            select_query = sql.SQL("""
-                SELECT * FROM coordonnee
-            """)
-            cursor.execute(select_query)
-
-            rows = cursor.fetchall()
-
-            return rows
-
-    finally:
-        connection.close()
-
-
-def clear_from_db():
+def clear_db():
     connection = connect_to_db()
 
     try:
@@ -83,6 +55,7 @@ def clear_from_db():
     
     return {"status": "All rows cleared from the database"}
     
+# ==== main functions ====
 def consume_messages(bootstrap_servers, group_id, topic):
     consumer_conf = {
         'bootstrap.servers': bootstrap_servers,
@@ -97,7 +70,7 @@ def consume_messages(bootstrap_servers, group_id, topic):
     iterations_without_messages = 0
 
     # start of clean sheets
-    clear_from_db()
+    clear_db()
 
     print(f'bootstrapped the consumer to broker and topic [{topic}]; waiting for messages...')
     try:
@@ -126,32 +99,16 @@ def consume_messages(bootstrap_servers, group_id, topic):
                     break
             
             # parse message
+            print(f'msg received: {msg.value().decode("utf-8")}')
             splitted_message = msg.value().decode('utf-8').split(';')
             lat = float(splitted_message[0])
             long = float(splitted_message[1])
             ip = splitted_message[2]
             date = splitted_message[3]
 
-            # turn it into object
+            # turn it into object and push to DB
             coord = Coord(lat=lat, long=long, ip=ip, date=date)
             push_to_db(coord)
-            all_rows = retrieve_all_rows()
-
-            # convert date in all_rows to string representation
-            all_rows_serializable = [
-                {"lat": row[1], "long": row[2], "ip": row[3], "date": str(row[4])} for row in all_rows
-            ]
-
-            # test api
-            response = requests.post("http://127.0.0.1:8000/update_location/", json={"geolocation_data": all_rows_serializable})
-            print(f'api response {response.json()}')
-
-            # push the coordinate to the database using FastAPI endpoint
-            # response = requests.post("http://127.0.0.1:8000/push_to_db")
-            # print(f'POST RESPONSE : {response.json()}')
-            # rows = requests.get("http://127.0.0.1:8000/retrieve_all_rows")
-            # print(f'---\n{rows}')
-            # TODO: Push to map map in frontend the rows that will autoupdate the map based on the coords
             
     except KeyboardInterrupt:
         print("KeyboardInterrupt")

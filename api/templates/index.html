@@ -26,22 +26,11 @@
         attribution: '© OpenStreetMap contributors'
     }).addTo(mymap);
 
-    // Define the coordinates of the rectangle
-    var rectangleCoords = [
-        [30, -20],
-        [30, 20],
-        [-30, 20],
-        [-30, -20],
-    ];
-
-    // Create a rectangle using the coordinates
-    var rectangle = L.polygon(rectangleCoords, {color: 'red'}).addTo(mymap);
-
     var path = L.polyline([], { color: 'blue' }).addTo(mymap); // Create an empty polyline
 
     async function fetchDataAndRefreshMap() {
-        console.log('FETCHING DATA');
-        const response = await fetch('http://127.0.0.1:8000/geolocation_data'); // Replace with your actual server endpoint
+        console.log('FETCHING DATA...');
+        const response = await fetch('http://127.0.0.1:8000/update_location')
         console.log(response)
         const data = await response.json();
         
@@ -58,7 +47,7 @@
         console.log('Path and markers updated on the map');
     }
 
-    setInterval(fetchDataAndRefreshMap, 1000); // Fetch and refresh data every 5 seconds
+    setInterval(fetchDataAndRefreshMap, 1000);
 
     fetchDataAndRefreshMap();
 
