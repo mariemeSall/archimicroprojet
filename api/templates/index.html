@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geolocation Map</title>
+    <!-- Include Leaflet CSS and JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        #map {
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+<script>
+    var mymap = L.map('map').setView([0, 0], 2);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(mymap);
+
+    var path = L.polyline([], { color: 'blue' }).addTo(mymap); // Create an empty polyline
+
+    async function fetchDataAndRefreshMap() {
+        console.log('FETCHING DATA...');
+        const response = await fetch('http://127.0.0.1:8000/update_location')
+        console.log(response)
+        const data = await response.json();
+        
+        console.log('Received data from server:', data);
+
+        path.setLatLngs([]); // Clear existing path
+
+        data.geolocation_data.forEach(coord => {
+            const latLng = [coord.lat, coord.long];
+            path.addLatLng(latLng);
+            L.marker(latLng).addTo(mymap).bindPopup(`IP: ${coord.ip}<br>Date: ${coord.date}`);
+        });
+
+        console.log('Path and markers updated on the map');
+    }
+
+    setInterval(fetchDataAndRefreshMap, 1000);
+
+    fetchDataAndRefreshMap();
+
+</script>
+</body>
+</html>

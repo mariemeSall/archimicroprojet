@@ -1,5 +1,18 @@
 # archi micro projet
 
+## TODO 
+
+Dockerize everything
+testapi.py api working
+kafka working
+bdd postgresql working
+consumer and producer working
+
+
+## Schema of structure
+
+![AltText](schema.jpg)
+
 ## Kafka
 
 [kafka quickstart guide](https://kafka.apache.org/quickstart)
@@ -77,6 +90,14 @@ your name.
     createdb -U cytech coords
     psql -U cytech -d coords -f db_microarchie.dump
 
+## API 
+
+### run api manually
+```
+uvicorn app:app --reload
+```
+
+## Docker 
 
 ### Run the docker-compose (postgres, front, kafka)
 ```
