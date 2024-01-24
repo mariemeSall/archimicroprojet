@@ -17,7 +17,7 @@ services:
     build:
       context: ./
     environment:
-      KAFKA_BROKER: kafka-broker:9092 #change to 29092 when testing with diff pc
+      KAFKA_BROKER: kafka:9092 #change to 29092 when testing with diff pc
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
       POSTGRES_USER: root
