@@ -2,32 +2,30 @@ version: '3'
 
 services:
   api:
-    build: ./api
+    build: ../api
     image: kafka_api
     container_name: kafka_api_container
     ports:
-        - "3001:3001"
+        - "8000:8000"
     volumes:
-        - ./api:/app
-    command: npm start
-    depends_on:
-        - postgres
+        - ../api:/app
+    command: uvicorn main:app
     networks:
-      - archimicroprojet_kafka_net
+      - kafka_net
 
   kafka-consumer:
     build:
-      context: ./backend/consumer
+      context: ./
     environment:
-      KAFKA_BROKER: kafka-broker:9092
+      KAFKA_BROKER: kafka-broker:9092 #change to 29092 when testing with diff pc
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
       POSTGRES_USER: root
       POSTGRES_PASSWORD: password
       POSTGRES_DB: coordonnee
     networks:
-      - archimicroprojet_kafka_net
+      - kafka_net
 
 networks:
-  archimicroprojet_kafka_net:
+  kafka_net:
     external: true
