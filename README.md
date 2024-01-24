@@ -100,16 +100,20 @@ uvicorn app:app --reload
 ## Docker 
 
 ### Run the docker-compose (postgres, front, kafka)
+Changer l'adresse ip dans le docker-compose.ylm pour celle du pc qui lance la commande
+
 ```
 docker-compose up
 ```
 
-### Run the producer docker-compose (postgres, front, kafka)
+### Run the producer docker-compose (kafka)
 ```
+cd producer
 docker-compose -f producer-docker-compose.yml up
 ```
 
-### Run the consumer docker-compose (postgres, front, kafka)
+### Run the consumer docker-compose (kafka, api)
 ```
+cd consumer
 docker-compose -f consumer-docker-compose.yml up
 ```

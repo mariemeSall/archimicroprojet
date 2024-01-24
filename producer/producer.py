@@ -61,7 +61,7 @@ def produce_messages(bootstrap_servers, topic, num_messages):
     producer.flush()
 
 if __name__ == '__main__':
-    bootstrap_servers = 'localhost:9092'  # Kafka broker's address
+    bootstrap_servers = 'kafka:9092'  # Kafka broker's address
     topic = 'coordinates'
     num_messages = 10
     produce_messages(bootstrap_servers, topic, num_messages)
