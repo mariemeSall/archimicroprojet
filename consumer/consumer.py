@@ -119,7 +119,7 @@ def consume_messages(bootstrap_servers, group_id, topic):
         consumer.close()
 
 if __name__ == '__main__':
-    bootstrap_servers = 'localhost:9092'  # Kafka broker's address
+    bootstrap_servers = 'kafka:9092'  # Kafka broker's address
     group_id = 'my-consumer-group'
     topic = 'coordinates'
     consume_messages(bootstrap_servers, group_id, topic)
